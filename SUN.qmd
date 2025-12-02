@@ -364,9 +364,7 @@ correlation_by_group %>%
 ```
 
 ## Question 22
-Display the average grades in Herbalism and Medicine as a function the average grades in Tribal
-Lore and Traditions for the students of the group in which those grades are the most correlated
-(positively or negatively).
+
 
 ```{r}
 
@@ -481,6 +479,44 @@ final_pass_status_df <- final_grades_sex %>%
 final_pass_status_df %>%
   head(10) %>%
   kable()
+
+```
+
+## Question 27 
+
+
+```{r}
+
+f <- final_pass_status_df %>%
+  filter(pass == FALSE, final_grade >= 10) %>%
+  nrow()
+
+f
+
+```
+
+The number of students who failed but have a final grade ≥ 10 is `f`
+
+## Question 28 
+
+```{r}
+
+pass_rate_by_group <- final_pass_status_df %>%
+  group_by(group) %>%
+  summarise(
+    pass_rate = mean(pass),
+    .groups = 'drop'
+  )
+
+ggplot(pass_rate_by_group, aes(x = as.factor(group), y = pass_rate, fill = as.factor(group))) +
+  geom_col() +
+  scale_y_continuous(limits = c(0, 1)) +
+  labs(
+    title = "Student Pass Rate by Group",
+    x = "Student Group",
+    y = "Pass Rate (Proportion)",
+    fill = "Group"
+  )
 
 ```
 
