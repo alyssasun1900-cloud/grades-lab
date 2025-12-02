@@ -379,4 +379,27 @@ student_course_averages_wide |>
 
 ```
 
+## Question 23 
+```{r}
 
+final_grades_df <- student_course_averages_wide %>%
+  rowwise() %>%
+  mutate(
+    final_grade = mean(c_across(3:last_col()), na.rm = TRUE)
+  ) %>%
+  ungroup() %>%
+  select(id, group, final_grade)
+
+final_grades_sex <- final_grades_df %>%
+  left_join(
+    students %>% select(id, sex),
+    by = "id"
+  ) %>%
+  select(id, group, sex, final_grade) %>%
+  arrange(desc(final_grade))
+
+final_grades_sex|>
+  head(5) |>
+  kable()
+
+```
