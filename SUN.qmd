@@ -49,7 +49,7 @@ knitr::kable(
 students <- read_csv(here("data", "students.csv"),
                      col_types = cols(
                        birth_date = col_date(),
-                       sex = factor()
+                       sex = col_factor()
                      )
 )
 
@@ -64,5 +64,13 @@ grades <- read_delim(here("data", "grades.csv"),
                      delim = ";",
                      na = "$")
 
+```
+
+## Question 5
+
+```{r}
+
+students |> ggplot()+geom_bar(aes(x = group))
 
 ```
+
