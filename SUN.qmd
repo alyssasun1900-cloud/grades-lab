@@ -72,6 +72,10 @@ grades <- read_delim(here("data", "grades.csv"),
 
 students |> ggplot()+geom_bar(aes(x = group))
 
+ggsave(here("figures", "question5.png"), 
+       width = 6, 
+       height = 4)
+
 ```
 
 ## Question 6 
@@ -84,6 +88,10 @@ ggplot(students, aes(x = group, fill = sex)) + geom_bar(position = "fill") +
     y = "Number of Students",
     fill = "Gender"
   )
+
+ggsave(here("figures", "question6.png"), 
+       width = 6, 
+       height = 4)
 
 ```
 
@@ -98,6 +106,11 @@ students|>
   mutate(age = round(age)) -> students
 
 students |> ggplot()+geom_bar(aes(x = age))
+
+
+ggsave(here("figures", "question7.png"), 
+       width = 6, 
+       height = 4)
 
 
 
@@ -167,6 +180,11 @@ grades_students_courses|>
   ggplot(aes(x = group, y = mean_grade))+geom_col()
 
 
+ggsave(here("figures", "question11.png"), 
+       width = 6, 
+       height = 4)
+
+
 ```
 
 ## Question 12
@@ -183,6 +201,10 @@ grades_students_courses|>
     y = "Grades",
     fill = "Module"
   ) 
+
+ggsave(here("figures", "question12.png"), 
+       width = 6, 
+       height = 4)
 
 ```
 
@@ -225,6 +247,11 @@ ggplot(gradesperstudent, aes(x = nb_grades, fill = sex)) +
     y = "Density",
     fill = "Gender"
   )
+
+ggsave(here("figures", "question14.png"), 
+       width = 6, 
+       height = 4)
+
 ```
 
 ## Question 15
@@ -261,6 +288,11 @@ grades_distribution_socorg_gov |>
     x = "Number of Grades Obtained per Student",
     y = "Number of Students"
   ) 
+
+ggsave(here("figures", "question16.png"), 
+       width = 6, 
+       height = 4)
+
 ```
 
 ## Question 17
@@ -277,6 +309,11 @@ ggplot(grades_socorg_gov, aes(x = as.factor(group), y = nb_grades_socorg_gov, fi
   ) +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
+
+ggsave(here("figures", "question17.png"), 
+       width = 6, 
+       height = 4)
+
 
 ```
 
@@ -303,7 +340,11 @@ grades_dependency_plot <- ggplot(grades_socorg_gov_full, aes(x = as.factor(group
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
 
-grades_dependency_plot
+ggsave(here("figures", "question18.png"), 
+       plot = grades_dependency_plot,
+       width = 6, 
+       height = 4)
+
 
 ```
 
@@ -344,6 +385,12 @@ student_course_averages_wide|>
   geom_jitter()+
   geom_smooth(method = "lm")
 
+
+ggsave(here("figures", "question20.png"), 
+       width = 6, 
+       height = 4)
+
+
 ```
 ## Question 21
 
@@ -373,6 +420,11 @@ student_course_averages_wide |>
   ggplot(aes(x = `Herbalism and Medicine`, y = `Tribal Lore and Traditions`))+
   geom_jitter()+
   geom_smooth(method = "lm")
+
+ggsave(here("figures", "question22.png"), 
+       width = 6, 
+       height = 4)
+
   
 
 ```
@@ -416,6 +468,11 @@ final_grades_sex|>
     fill = "Group"
   )
 
+ggsave(here("figures", "question24.png"), 
+       width = 6, 
+       height = 4)
+
+
 ```
 ## Question 25    
 
@@ -431,6 +488,11 @@ ggplot(final_grades_sex, aes(x = as.factor(group), y = final_grade, fill = as.fa
   ) +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
+
+ggsave(here("figures", "question25.png"), 
+       width = 6, 
+       height = 4)
+
 
 ```
 
@@ -495,7 +557,7 @@ f
 
 ```
 
-The number of students who failed but have a final grade ≥ 10 is `f`
+The number of students who failed but have a final grade ≥ 10 is 271
 
 ## Question 28 
 
@@ -518,9 +580,75 @@ ggplot(pass_rate_by_group, aes(x = as.factor(group), y = pass_rate, fill = as.fa
     fill = "Group"
   )
 
+ggsave(here("figures", "question28.png"), 
+       width = 6, 
+       height = 4)
+
+
 ```
 
+## Question 29
+
+```{r}
+
+course_failure_responsibility <- student_course_averages_wide %>%
+  pivot_longer(
+    cols = -c(id, group),
+    names_to = "course_name",
+    values_to = "average_grade"
+  ) %>%
+  filter(average_grade < 5) %>%
+  group_by(course_name) %>%
+  summarise(
+    n_failures = n(),
+    .groups = 'drop'
+  ) %>%
+  arrange(desc(n_failures))
+
+most_responsible_course <- course_failure_responsibility %>%
+  head(1)
+
+most_responsible_course %>%
+  kable()
+
+```
+
+## Question 30 
+
+```{r}
 
 
+final_status_with_age <- final_pass_status_df %>%
+  left_join(
+    students %>% select(id, age),
+    by = "id"
+  )
+
+pass_rate_by_age <- final_status_with_age %>%
+  group_by(age) %>%
+  summarise(
+    pass_rate = mean(pass),
+    n_students = n(),
+    .groups = 'drop'
+  )
+
+pass_rate_by_age|>
+  drop_na()|>
+  ggplot(aes(x = age, y = pass_rate)) +
+  geom_point(aes(size = n_students)) +
+  geom_smooth(method = "lm", se = TRUE, color = "blue") +
+  scale_y_continuous(limits = c(0, 1)) +
+  labs(
+    title = "Success Rate as a Function of Student Age",
+    x = "Student Age (Years)",
+    y = "Pass Rate (Proportion)",
+    size = "Number of Students"
+  ) 
+
+ggsave(here("figures", "question30.png"), 
+       width = 6, 
+       height = 4)
+
+```
 
 
