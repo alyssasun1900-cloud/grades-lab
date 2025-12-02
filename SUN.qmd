@@ -1,0 +1,43 @@
+---
+title: "SUN"
+author: "Yueran SUN"
+format: html
+---
+
+## Setup
+
+
+```{r}
+
+here::i_am("grades-lab.Rproj")
+library(here)
+library(tidyverse)
+library(ggplot2)
+
+```
+
+
+## Question 1
+
+```{r}
+
+courses <- read_csv(here("data","courses.csv"))
+
+```
+
+## Question 2
+
+
+```{r}
+
+sorted_courses <- courses[order(courses$course), ]
+
+column_names_english <- c("Course Name", "Identifier", "Module", "Number of Exams")
+
+knitr::kable(
+  sorted_courses, 
+  col.names = column_names_english, 
+  caption = "Course List"
+)
+
+```
