@@ -280,3 +280,69 @@ ggplot(grades_socorg_gov, aes(x = as.factor(group), y = nb_grades_socorg_gov, fi
 
 ```
 
+## Question 18 
+
+```{r}
+
+grades_socorg_gov_full <- grades_students_courses %>%
+  filter(course == "Social Organization and Governance") %>%
+  group_by(id, group, sex) %>%
+  summarise(
+    nb_grades_socorg_gov = sum(!is.na(grade)),
+    .groups = 'drop'
+  )
+
+grades_dependency_plot <- ggplot(grades_socorg_gov_full, aes(x = as.factor(group), y = nb_grades_socorg_gov, fill = sex)) +
+    geom_violin(position = position_dodge(width = 0.8)) +
+    labs(
+    title = "Grades Count in 'Social Organization and Governance' by Group and Gender",
+    x = "Student Group",
+    y = "Number of Grades Obtained per Student",
+    fill = "Gender"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+grades_dependency_plot
+
+```
+
+## Question 19 
+
+```{r}
+
+student_course_averages <- grades_students_courses %>%
+  group_by(id, group, course) %>%
+  summarise(
+    mean_grade = mean(grade, na.rm = TRUE),
+    .groups = 'drop'
+  )
+
+student_course_averages_wide <- student_course_averages %>%
+  pivot_wider(
+    id_cols = c(id, group),
+    names_from = course,
+    values_from = mean_grade
+  )
+
+first_course_col <- names(student_course_averages_wide)[3]
+second_course_col <- names(student_course_averages_wide)[4]
+
+student_course_averages_wide %>%
+  select(id, group, !!sym(first_course_col), !!sym(second_course_col)) %>%
+  head(10) %>%
+  kable(caption = "Extract of Student Course Averages (Wide Format)")
+
+```
+
+## Question 20 
+
+```{r}
+
+student_course_averages_wide|>
+  ggplot(aes(x = `Astronomy and Celestial Navigation`, y = `Herbalism and Medicine`))+
+  geom_jitter()+
+  geom_smooth(method = "lm")
+
+```
+
