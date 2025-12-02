@@ -122,3 +122,23 @@ kable(
 )
 
 ```
+
+## Question 9 
+
+```{r}
+
+oldest_students <- students |>
+  group_by(group) |>
+  filter(row_number(desc(age)) == 1) |>
+  select(id, sex, age, group) |>
+  arrange(desc(age)) |>
+  ungroup()
+
+kable(
+  oldest_students, 
+  col.names = c("Student ID", "Gender", "Age (Years)", "Group"), 
+  caption = "Oldest Student in Each Group"
+)
+
+```
+
