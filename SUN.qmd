@@ -103,3 +103,22 @@ students |> ggplot()+geom_bar(aes(x = age))
 
 ```
 
+## Question 8 
+
+```{r}
+
+library(knitr)
+
+median_age_by_group <- students |>
+  group_by(group) |>
+    summarise(
+    median_age = round(median(age, na.rm = TRUE)) 
+  )
+
+kable(
+  median_age_by_group, 
+  col.names = c("Group", "Median Age (Years)"), 
+  caption = "Median Student Age by Group"
+)
+
+```
