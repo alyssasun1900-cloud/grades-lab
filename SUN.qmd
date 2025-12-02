@@ -74,3 +74,32 @@ students |> ggplot()+geom_bar(aes(x = group))
 
 ```
 
+## Question 6 
+
+```{r}
+
+ggplot(students, aes(x = group, fill = sex)) + geom_bar(position = "fill") +
+    labs(
+    x = "Student Group",
+    y = "Number of Students",
+    fill = "Gender"
+  )
+
+```
+
+## Question 7
+
+```{r}
+
+library(lubridate)
+
+students|>
+  mutate(age = time_length(today() - birth_date, unit="year"))|>
+  mutate(age = round(age)) -> students
+
+students |> ggplot()+geom_bar(aes(x = age))
+
+
+
+```
+
