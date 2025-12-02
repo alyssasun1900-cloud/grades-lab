@@ -121,6 +121,8 @@ kable(
   caption = "Median Student Age by Group"
 )
 
+#Updating kable did not remove the warning
+
 ```
 
 ## Question 9 
@@ -142,3 +144,25 @@ kable(
 
 ```
 
+## Question 10 
+
+The data set contains `r sum(!is.na(courses$grades))` grades.
+
+## Question 11
+
+
+Compute the average of all the grades in Warfare and Diplomacy in each group and display
+graphically this average as a function of the group. It is recommend to use geom_col() for this
+task (read the documentation!).
+
+```{r}
+
+grades_students <- grades|>
+  left_join(students, by = "id")
+
+grades_students_courses <- grades_students|>
+  left_join(courses, by = "course_id")
+
+
+
+```
