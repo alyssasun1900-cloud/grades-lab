@@ -151,8 +151,6 @@ The data set contains `r sum(!is.na(grades$grades))` grades.
 ## Question 11
 
 
-Compute the average of all the grades in Warfare and Diplomacy in each group and display
-graphically this average as a function of the group. It is recommend to use geom_col() for this task.
 
 ```{r}
 
@@ -205,10 +203,44 @@ gradesperstudent <- grades_students_courses %>%
   ) %>%
   select(id, group, sex, nb_grades, min_grade, max_grade, avg_grade, median_grade)
 
+gradesperstudent |>
+slice_tail(n = 5) |>
+knitr::kable()
+
 ```
 
 The summary statistics for the number of grades per student are presented in the table below:
 
 `r gradesperstudent %>% summarise(Minimum = min(nb_grades), Maximum = max(nb_grades), Average = mean(nb_grades), Median = median(nb_grades)) %>% kable(caption = "Summary Statistics for Number of Grades per Student", col.names = c("Minimum Grades", "Maximum Grades", "Average Grades", "Median Grades"), format = "markdown", digits = 2)`
 
+## Question 14
 
+```{r}
+
+ggplot(gradesperstudent, aes(x = nb_grades, fill = sex)) +
+  geom_bar(position = "stack") +
+  labs(
+    title = "Distribution of Number of Grades per Student by Gender",
+    x = "Number of Grades",
+    y = "Density",
+    fill = "Gender"
+  )
+```
+
+## Question 15
+
+```{r}
+
+grades_socorg_gov <- grades_students_courses %>%
+  filter(course == "Social Organization and Governance") %>%
+  group_by(id, group) %>%
+  summarise(
+    nb_grades_socorg_gov = sum(!is.na(grade)),
+    .groups = 'drop'
+  )
+
+gradesperstudent |>
+slice_tail(n = 5) |>
+knitr::kable()
+
+```
