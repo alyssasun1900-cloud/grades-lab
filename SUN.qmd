@@ -41,3 +41,28 @@ knitr::kable(
 )
 
 ```
+
+## Question 3
+
+```{r}
+
+students <- read_csv(here("data", "students.csv"),
+                     col_types = cols(
+                       birth_date = col_date(),
+                       sex = factor()
+                     )
+)
+
+```
+
+
+## Question 4
+
+```{r}
+
+grades <- read_delim(here("data", "grades.csv"), 
+                     delim = ";",
+                     na = "$")
+
+
+```
