@@ -403,3 +403,88 @@ final_grades_sex|>
   kable()
 
 ```
+
+## Question 24
+
+```{r}
+
+final_grades_sex|>
+  ggplot(aes(x = as.factor(group), y = final_grade, fill = as.factor(group))) +
+  geom_boxplot() +
+  labs(
+    title = "Distribution of Final Grades Across Student Groups",
+    x = "Student Group",
+    y = "Final Grade",
+    fill = "Group"
+  )
+
+```
+## Question 25    
+
+```{r}
+
+ggplot(final_grades_sex, aes(x = as.factor(group), y = final_grade, fill = as.factor(sex))) +
+  geom_boxplot(position = position_dodge(width = 0.8)) +
+  labs(
+    title = "Distribution of Final Grades by Group and Gender",
+    x = "Student Group",
+    y = "Final Grade",
+    fill = "Gender"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+## Question 26 
+
+```{r}
+
+module_map <- courses %>%
+  select(course, module) %>%
+  distinct()
+
+condition_1 <- student_course_averages_wide %>%
+  rowwise() %>%
+  mutate(
+    pass_c1 = min(c_across(3:last_col()), na.rm = TRUE) >= 5
+  ) %>%
+  ungroup() %>%
+  select(id, pass_c1)
+
+condition_2 <- student_course_averages_wide %>%
+  pivot_longer(
+    cols = -c(id, group),
+    names_to = "course",
+    values_to = "mean_grade"
+  ) %>%
+  left_join(module_map, by = "course") %>%
+  group_by(id, module) %>%
+  summarise(
+    module_avg = mean(mean_grade, na.rm = TRUE),
+    .groups = 'drop_last'
+  ) %>%
+  summarise(
+    pass_c2 = all(module_avg >= 10, na.rm = TRUE),
+    .groups = 'drop'
+  ) %>%
+  select(id, pass_c2)
+
+final_pass_status_df <- final_grades_sex %>%
+  left_join(condition_1, by = "id") %>%
+  left_join(condition_2, by = "id") %>%
+  mutate(
+    pass = pass_c1 & pass_c2
+  ) %>%
+  select(id, group, final_grade, pass)
+
+final_pass_status_df %>%
+  head(10) %>%
+  kable()
+
+```
+
+
+
+
+
