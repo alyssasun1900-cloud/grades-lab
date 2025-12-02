@@ -237,10 +237,46 @@ grades_socorg_gov <- grades_students_courses %>%
   summarise(
     nb_grades_socorg_gov = sum(!is.na(grade)),
     .groups = 'drop'
-  )
+  )|>
+  select(nb_grades_socorg_gov, id, group)
 
-gradesperstudent |>
+grades_socorg_gov |>
 slice_tail(n = 5) |>
 knitr::kable()
 
 ```
+
+## Question 16
+
+```{r}
+grades_distribution_socorg_gov <- grades_socorg_gov %>%
+  group_by(nb_grades_socorg_gov) %>%
+  summarise(n_students = n(), .groups = 'drop')
+
+grades_distribution_socorg_gov |> 
+  ggplot(aes(x = nb_grades_socorg_gov, y = n_students)) +
+  geom_col()+
+  labs(
+    title = "Distribution of Grades Obtained in 'Social Organization and Governance'",
+    x = "Number of Grades Obtained per Student",
+    y = "Number of Students"
+  ) 
+```
+
+## Question 17
+
+```{r}
+
+ggplot(grades_socorg_gov, aes(x = as.factor(group), y = nb_grades_socorg_gov, fill = as.factor(group))) +
+  geom_violin() +
+  labs(
+    title = "Distribution of Grades Count in 'Social Organization and Governance' by Group",
+    x = "Student Group",
+    y = "Number of Grades Obtained per Student",
+    fill = "Group"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+
