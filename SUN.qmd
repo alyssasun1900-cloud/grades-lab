@@ -345,4 +345,38 @@ student_course_averages_wide|>
   geom_smooth(method = "lm")
 
 ```
+## Question 21
+
+```{r}
+
+correlation_by_group <- student_course_averages_wide %>%
+  group_by(group) %>%
+  summarise(
+    correlation_herbalism_tribal = cor(`Herbalism and Medicine`, `Tribal Lore and Traditions`, use = "pairwise.complete.obs"),
+    .groups = 'drop'
+  )
+
+correlation_by_group %>%
+  kable(caption = "Correlation Between Average Grades in Herbalism and Medicine and Tribal Lore and Traditions by Group",
+        col.names = c("Group", "Correlation Coefficient"),
+        digits = 3)
+
+```
+
+## Question 22
+Display the average grades in Herbalism and Medicine as a function the average grades in Tribal
+Lore and Traditions for the students of the group in which those grades are the most correlated
+(positively or negatively).
+
+```{r}
+
+student_course_averages_wide |>
+  filter(group == 5)|>
+  ggplot(aes(x = `Herbalism and Medicine`, y = `Tribal Lore and Traditions`))+
+  geom_jitter()+
+  geom_smooth(method = "lm")
+  
+
+```
+
 
