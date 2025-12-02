@@ -146,14 +146,13 @@ kable(
 
 ## Question 10 
 
-The data set contains `r sum(!is.na(courses$grades))` grades.
+The data set contains `r sum(!is.na(grades$grades))` grades.
 
 ## Question 11
 
 
 Compute the average of all the grades in Warfare and Diplomacy in each group and display
-graphically this average as a function of the group. It is recommend to use geom_col() for this
-task (read the documentation!).
+graphically this average as a function of the group. It is recommend to use geom_col() for this task.
 
 ```{r}
 
@@ -163,6 +162,53 @@ grades_students <- grades|>
 grades_students_courses <- grades_students|>
   left_join(courses, by = "course_id")
 
+grades_students_courses|>
+  filter(course == "Warfare and Diplomacy")|>
+  group_by(group)|>
+  summarize(mean_grade = mean(grade, na.rm = TRUE))|>
+  ggplot(aes(x = group, y = mean_grade))+geom_col()
 
 
 ```
+
+## Question 12
+
+```{r}
+
+grades_students_courses|>
+  drop_na()|>
+  ggplot(aes(x = as.factor(module), y = grade, fill = as.factor(module))) +
+  geom_violin() +
+  labs(
+    title = "Distribution of Grades Across Modules",
+    x = "Module",
+    y = "Grades",
+    fill = "Module"
+  ) 
+
+```
+
+## Question 13
+
+
+```{r}
+
+gradesperstudent <- grades_students_courses %>%
+  group_by(id, group, sex) %>%
+  summarise(
+    nb_grades = sum(!is.na(grade)),
+    min_grade = min(grade, na.rm = TRUE),
+    max_grade = max(grade, na.rm = TRUE),
+    avg_grade = mean(grade, na.rm = TRUE),
+    median_grade = median(grade, na.rm = TRUE),
+    .groups = 'drop'
+  ) %>%
+  select(id, group, sex, nb_grades, min_grade, max_grade, avg_grade, median_grade)
+
+```
+
+The summary statistics for the number of grades per student are presented in the table below:
+
+`r gradesperstudent %>% summarise(Minimum = min(nb_grades), Maximum = max(nb_grades), Average = mean(nb_grades), Median = median(nb_grades)) %>% kable(caption = "Summary Statistics for Number of Grades per Student", col.names = c("Minimum Grades", "Maximum Grades", "Average Grades", "Median Grades"), format = "markdown", digits = 2)`
+
+
